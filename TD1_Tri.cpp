@@ -314,7 +314,12 @@ std::vector<int> create_rand_vector(int size, time_t seed)
 
 void display_vector(const std::vector<int>& to_display)
 {
-	for (unsigned int i = 0; i < to_display.size() - 1; ++i)
+	std::vector<int>::size_type size = to_display.size();
+	if (size == 0)
+	{
+		return;
+	}
+	for (auto i = 0; i < size - 1; ++i)
 	{
 		std::cout << to_display[i] << ", ";
 	}
