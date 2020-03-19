@@ -18,7 +18,7 @@ void quick_sort_rec(std::vector<int>& to_sort, int start, int end);
 std::vector<int> quick_sort(std::vector<int> to_sort);
 int ind_min(const std::vector<int>& v, const int& i);
 int partition(std::vector<int>& v, int start, int end);
-std::vector<int> merge(const std::vector<int>& v1,const std::vector<int>& v2);
+std::vector<int> merge(const std::vector<int>& v1, const std::vector<int>& v2);
 std::vector<int> get_from_to(const std::vector<int>& v, std::vector<int>::size_type start, std::vector<int>::size_type end);
 std::vector<int> create_rand_vector(int size, time_t seed);
 
@@ -41,13 +41,13 @@ bool vectors_are_equal(std::vector<int> sorted, std::vector<int> control)
 }
 
 template<typename Lambda>
-void testing(std::vector<int> control, std::vector<int> to_sort, std::string function_name, Lambda function)
+void testing(int nb_test, std::vector<int> control, std::vector<int> to_sort, std::string function_name, Lambda function)
 {
 	std::vector<int> vector_sorted;
 
 	double total_time = 0;
 
-	for (auto k = 0; k < 100; ++k)
+	for (auto k = 0; k < nb_test; ++k)
 	{
 		auto start = std::chrono::high_resolution_clock::now();
 		vector_sorted = function(to_sort);
@@ -57,41 +57,49 @@ void testing(std::vector<int> control, std::vector<int> to_sort, std::string fun
 		total_time += duration;
 	}
 	std::cout << function_name << " Test " << ((vectors_are_equal(vector_sorted, control)) ? "Passed" : "Failed") << "\n";
-	std::cout << "Elapsed time on average for the " << function_name << " : " << total_time/100 << '\n';
-
-
+	std::cout << "Elapsed time on average for the " << function_name << " : " << total_time / 100 << '\n';
 }
-
 
 int main()
 {
 	time_t seed = time(NULL);
 	std::cout << "Seed used to generate the random vector : " << seed << '\n';
 
-	std::vector<int> vector_to_sort;
-	vector_to_sort = create_rand_vector(1000, seed); //Create a random vector with a size of 1000
+	int vector_size = 1;
 
+	do {
+		std::cout << "Enter the size of testing vector : ";
+		std::cin >> vector_size;
+		std::cout << '\n';
+	} while (vector_size < 1);
+
+	std::vector<int> vector_to_sort;
+	vector_to_sort = create_rand_vector(vector_size, seed); //Create a random vector with a size of 1000
 
 	std::vector<int> control(vector_to_sort);
 	std::sort(control.begin(), control.end());
 
+	int nb_test = 1;
 
-	testing(control, vector_to_sort, "Bubble sort", bubble_sort);
-	testing(control, vector_to_sort, "Optimized bubble sort", bubble_sort_optimized);
-	testing(control, vector_to_sort, "Selection sort", selection_sort);
-	testing(control, vector_to_sort, "Insertion sort", insertion_sort);
-	testing(control, vector_to_sort, "Merge sort", merge_sort);
-	testing(control, vector_to_sort, "Quick sort", quick_sort);
+	do {
+		std::cout << "Enter the number of test for each sorting algorithm : ";
+		std::cin >> nb_test;
+		std::cout << '\n';
+	} while (nb_test < 1);
+
+	testing(nb_test, control, vector_to_sort, "Bubble sort", bubble_sort);
+	testing(nb_test, control, vector_to_sort, "Optimized bubble sort", bubble_sort_optimized);
+	testing(nb_test, control, vector_to_sort, "Selection sort", selection_sort);
+	testing(nb_test, control, vector_to_sort, "Insertion sort", insertion_sort);
+	testing(nb_test, control, vector_to_sort, "Merge sort", merge_sort);
+	testing(nb_test, control, vector_to_sort, "Quick sort", quick_sort);
 }
-
-
-
 
 std::vector<int> bubble_sort(std::vector<int> to_sort)
 {
 	//For the i-iteration we loop the n-(i+1) value and swap if two following value are not sorted
 	std::vector<int>::size_type size = to_sort.size();
-	for (auto i = size -1 ; i > 0; --i)
+	for (auto i = size - 1; i > 0; --i)
 	{
 		for (auto k = 0; k < i; ++k)
 		{
@@ -105,7 +113,6 @@ std::vector<int> bubble_sort(std::vector<int> to_sort)
 	}
 	return to_sort; //Time complexity : O(n^2) where n is the size of the vector in any case
 }
-	
 
 std::vector<int> bubble_sort_optimized(std::vector<int> to_sort)
 {
@@ -117,7 +124,6 @@ std::vector<int> bubble_sort_optimized(std::vector<int> to_sort)
 		sorted = true;
 		for (auto k = 0; k < size - i; ++k)
 		{
-
 			if (to_sort[k] > to_sort[k + 1])
 			{
 				int value = to_sort[k];
@@ -128,9 +134,8 @@ std::vector<int> bubble_sort_optimized(std::vector<int> to_sort)
 		}
 		++i;
 	}
-	return to_sort; //Time complexity : O(n^2) where n is the size of the vector in the worse case, in the best case O(n)	
+	return to_sort; //Time complexity : O(n^2) where n is the size of the vector in the worse case, in the best case O(n)
 }
-
 
 std::vector<int> selection_sort(std::vector<int> to_sort)
 {
@@ -146,7 +151,6 @@ std::vector<int> selection_sort(std::vector<int> to_sort)
 	return to_sort; //Time complexity : O(n^2) where n is the size of the vector in the worst case, in the best case O(n)
 }
 
-
 std::vector<int> insertion_sort(std::vector<int> to_sort)
 {
 	//For the i-iteration we suppose the vector to be sort for the i-1 first value we insert the i-value into the i-1 value to keep it sort
@@ -161,10 +165,8 @@ std::vector<int> insertion_sort(std::vector<int> to_sort)
 			k--;
 		}
 		to_sort[k] = value;
-
 	}
 	return to_sort; //Time complexity : O(n^2) where n is the size of the vector in the worst case, in the best case O(n)
-	
 }
 
 int ind_min(const std::vector<int>& v, const int& i)
@@ -184,8 +186,6 @@ int ind_min(const std::vector<int>& v, const int& i)
 	return ind_min;
 }
 
-
-
 std::vector<int> merge_sort(const std::vector<int>& to_sort)
 {
 	if (to_sort.size() <= 1)
@@ -200,8 +200,8 @@ std::vector<int> merge_sort(const std::vector<int>& to_sort)
 		std::vector<int> right;
 		left.reserve(mid);
 		right.reserve(size - mid);
-		
-		left = get_from_to(to_sort,(std::vector<int>::size_type) 0, mid);
+
+		left = get_from_to(to_sort, (std::vector<int>::size_type) 0, mid);
 		right = get_from_to(to_sort, mid, size);
 
 		left = merge_sort(left);
@@ -212,7 +212,7 @@ std::vector<int> merge_sort(const std::vector<int>& to_sort)
 	//Time complexity : O(n*log(n)) where n is the size of the vector
 }
 
-std::vector<int> merge(const std::vector<int>& v1,const std::vector<int>& v2)
+std::vector<int> merge(const std::vector<int>& v1, const std::vector<int>& v2)
 {
 	std::vector<int>::size_type n1 = v1.size();
 	std::vector<int>::size_type n2 = v2.size();
@@ -250,7 +250,6 @@ std::vector<int> merge(const std::vector<int>& v1,const std::vector<int>& v2)
 
 std::vector<int> get_from_to(const std::vector<int>& v, std::vector<int>::size_type start, std::vector<int>::size_type end)
 {
-
 	if (start == end)
 	{
 		std::cout << "get_from_to ERROR start index = end index";
@@ -264,7 +263,6 @@ std::vector<int> get_from_to(const std::vector<int>& v, std::vector<int>::size_t
 	}
 	return extrated;
 }
-
 
 void quick_sort_rec(std::vector<int>& to_sort, int start, int end)
 {
@@ -303,7 +301,6 @@ int partition(std::vector<int>& v, int start, int end)
 	return p;
 }
 
-
 std::vector<int> create_rand_vector(int size, time_t seed)
 {
 	srand(seed);
@@ -315,10 +312,9 @@ std::vector<int> create_rand_vector(int size, time_t seed)
 	return random_vector;
 }
 
-
 void display_vector(const std::vector<int>& to_display)
 {
-	for (unsigned int i = 0; i < to_display.size() -1 ; ++i)
+	for (unsigned int i = 0; i < to_display.size() - 1; ++i)
 	{
 		std::cout << to_display[i] << ", ";
 	}
