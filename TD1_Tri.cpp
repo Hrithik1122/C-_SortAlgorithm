@@ -57,7 +57,7 @@ void testing(int nb_test, std::vector<int> control, std::vector<int> to_sort, st
 		total_time += duration;
 	}
 	std::cout << function_name << " Test " << ((vectors_are_equal(vector_sorted, control)) ? "Passed" : "Failed") << "\n";
-	std::cout << "Elapsed time on average for the " << function_name << " : " << total_time / 100 << '\n';
+	std::cout << "Elapsed time on average for the " << function_name << " : " << total_time / nb_test << '\n';
 }
 
 int main()
